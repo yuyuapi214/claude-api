@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GPT API、Claude API 国内接入完整指南：从注册到实战调用，详细介绍模型选择、账号注册、API 配置到实际调用的完整流程。">
+    <meta name="keywords" content="GPT API, Claude API, API中转站, GPT-6 Astra, Claude Opus 5, 全智API, API接入教程">
+    <title>GPT API、Claude API 国内接入完整指南 - 从注册到实战调用</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: #24292f;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .update-info {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        /* Navigation */
+        .toc {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .toc-list li {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .toc-list li:hover {
+            background: #667eea;
+            transform: translateX(5px);
+        }
+
+        .toc-list a {
+            color: #24292f;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+        }
+
+        .toc-list li:hover a {
+            color: white;
+        }
+
+        /* Content Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .section h3 {
+            color: #24292f;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+
+        .section h4 {
+            color: #4a5568;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.75em;
+            color: #a0aec0;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .code-block code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .code-inline {
+            background: #edf2f7;
+            color: #667eea;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            border-color: #4299e1;
+            color: #2c5282;
+        }
+
+        .alert-warning {
+            background: #fef5e7;
+            border-color: #ed8936;
+            color: #975a16;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            border-color: #48bb78;
+            color: #276749;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #24292f;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Button */
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.8;
+        }
+
+        /* Paragraph */
+        p {
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        /* FAQ Section */
+        .faq-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .faq-answer {
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2d3748;
+            color: #e2e8f0;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-links {
+            margin: 20px 0;
+        }
+
+        .footer-links a {
+            color: #90cdf4;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Highlight */
+        .highlight {
+            background: linear-gradient(120deg, #ffeaa7 0%, #dfe6e9 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 0 5px;
+        }
+
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ed8936;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>GPT API、Claude API 国内接入完整指南</h1>
+        <p class="subtitle">从注册到实战调用：详细介绍模型选择、账号注册、API 配置到实际调用的完整流程，提供可直接运行的 curl、Python、Node.js 示例代码</p>
+        <div class="update-info">📅 更新于 2026-10-14 | ⭐ 如果有帮助，请给个 Star</div>
+    </div>
+
+    <div class="container">
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>📑 目录导航</h2>
+            <ul class="toc-list">
+                <li><a href="#section1">一、先选接入方式</a></li>
+                <li><a href="#section2">二、主流模型对比与选择建议</a></li>
+                <li><a href="#section3">三、中转站接入详细流程</a></li>
+                <li><a href="#section4">四、接入前后检查清单</a></li>
+                <li><a href="#section5">五、实战代码示例</a></li>
+                <li><a href="#section6">六、最佳实践与优化建议</a></li>
+                <li><a href="#section7">七、常见问题 FAQ</a></li>
+                <li><a href="#section8">八、资源链接</a></li>
+            </ul>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert alert-info">
+            <div class="alert-title">ℹ️ 非官方声明</div>
+            <p>本项目为独立的第三方教程整理项目，与 OpenAI、Anthropic、GitHub 等公司不存在官方合作、授权或隶属关系。ChatGPT、OpenAI、Claude、Anthropic 等商标归各自权利人所有。</p>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="section" id="section1">
+            <h2>一、先选接入方式</h2>
+            <p>国内开发者接入 GPT API、Claude API 主要有两种方式，各有优劣：</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>方式</th>
+                        <th>需要准备</th>
+                        <th>优势</th>
+                        <th>劣势</th>
+                        <th>适用情况</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>官方 API</strong></td>
+                        <td>开发者账号、API Key、海外支付方式、稳定网络环境</td>
+                        <td>接口完整、功能最新、官方支持</td>
+                        <td>注册门槛高、需要海外支付、网络不稳定</td>
+                        <td>企业级应用、需要官方支持</td>
+                    </tr>
+                    <tr>
+                        <td><strong>兼容中转服务</strong></td>
+                        <td>服务商签发的 Token、Base URL</td>
+                        <td>注册简单、国内直连、价格优惠、支持多模型</td>
+                        <td>功能可能滞后、需选择可靠服务商</td>
+                        <td>个人开发者、中小企业、快速原型</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>中转服务的核心优势</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-title">零门槛接入</div>
+                    <div class="feature-desc">无需海外信用卡，支持支付宝、微信支付</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-title">国内直连</div>
+                    <div class="feature-desc">无需配置网络环境，稳定可靠</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-title">统一接口</div>
+                    <div class="feature-desc">一个 Key 接入 GPT、Claude、Gemini、DeepSeek 等多模型</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-title">价格优势</div>
+                    <div class="feature-desc">比官方便宜 20%-70%，按量计费，无最低消费</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <div class="feature-title">余额永不过期</div>
+                    <div class="feature-desc">充值一次，永久可用</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">实时监控</div>
+                    <div class="feature-desc">用量统计、账单明细一目了然</div>
+                </div>
+            </div>
+
+            <p>需要中转服务的话，推荐使用 <a href="https://quanzil.com/" target="_blank" class="btn">全智API - AI大模型API中转站</a>，支持国内外主流大模型，稳定运行 3 年+。</p>
+
+            <div class="alert alert-warning">
+                <div class="alert-title">⚠️ 选择中转服务的注意事项</div>
+                <ul>
+                    <li>✅ <strong>先小额测试</strong> - 充值最小金额，测试模型响应和计费准确性</li>
+                    <li>✅ <strong>核对模型列表</strong> - 确认所需模型已开放，查看实时价格</li>
+                    <li>✅ <strong>测试功能完整性</strong> - 流式输出、函数调用、Vision 等关键功能</li>
+                    <li>✅ <strong>查看服务条款</strong> - 了解数据隐私政策、SLA 保障</li>
+                    <li>⚠️ <strong>避免超低价格陷阱</strong> - 价格过低可能意味着服务质量或稳定性问题</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section" id="section2">
+            <h2>二、主流模型对比与选择建议</h2>
+            
+            <h3>2026 年热门模型一览</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>模型系列</th>
+                        <th>API 模型 ID</th>
+                        <th>特点</th>
+                        <th>适用场景</th>
+                        <th>价格参考（输入/输出）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GPT-6 Astra</strong></td>
+                        <td><code class="code-inline">gpt-6-astra</code></td>
+                        <td>最新旗舰，推理能力顶尖</td>
+                        <td>高难度推理、复杂任务编排</td>
+                        <td>$15/$45 每百万 token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GPT-5.6 Luna</strong></td>
+                        <td><code class="code-inline">gpt-5.6-luna</code></td>
+                        <td>轻量快速，性价比高</td>
+                        <td>摘要、分类、简单问答</td>
+                        <td>$0.5/$1.5 每百万 token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GPT-5.6 Terra</strong></td>
+                        <td><code class="code-inline">gpt-5.6-terra</code></td>
+                        <td>平衡型，日常首选</td>
+                        <td>编程、内容创作、日常应用</td>
+                        <td>$3/$9 每百万 token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Opus 5</strong></td>
+                        <td><code class="code-inline">claude-opus-5</code></td>
+                        <td>编程能力最强，200K 上下文</td>
+                        <td>复杂编程、Agent 工作流</td>
+                        <td>$15/$75 每百万 token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Fable 5.1</strong></td>
+                        <td><code class="code-inline">claude-fable-5-1</code></td>
+                        <td>超长推理，研究级</td>
+                        <td>长流程推理、研究任务</td>
+                        <td>$25/$125 每百万 token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DeepSeek V3</strong></td>
+                        <td><code class="code-inline">deepseek-chat</code></td>
+                        <td>中文优秀，性价比极高</td>
+                        <td>中文场景、代码生成</td>
+                        <td>$0.27/$1.1 每百万 token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gemini 3.5 Flash</strong></td>
+                        <td><code class="code-inline">gemini-3.5-flash</code></td>
+                        <td>响应超快，多模态</td>
+                        <td>高频调用、实时应用</td>
+                        <td>$0.075/$0.3 每百万 token</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>按场景选择模型</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <div class="feature-title">编程开发</div>
+                    <div class="feature-desc">
+                        <strong>首选：</strong>Claude Opus 5（代码质量最高）<br>
+                        <strong>性价比：</strong>GPT-5.6 Terra 或 Claude Sonnet 4.6<br>
+                        <strong>高频场景：</strong>DeepSeek V3（成本低，速度快）
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✍️</div>
+                    <div class="feature-title">内容创作</div>
+                    <div class="feature-desc">
+                        <strong>首选：</strong>GPT-5.6 Terra（创意能力强）<br>
+                        <strong>专业写作：</strong>Claude Opus 5（严谨专业）<br>
+                        <strong>快速生成：</strong>GPT-5.6 Luna
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">数据分析与推理</div>
+                    <div class="feature-desc">
+                        <strong>首选：</strong>GPT-6 Astra（推理能力最强）<br>
+                        <strong>复杂分析：</strong>Claude Fable 5.1<br>
+                        <strong>日常分析：</strong>GPT-5.6 Sol
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🇨🇳</div>
+                    <div class="feature-title">中文场景</div>
+                    <div class="feature-desc">
+                        <strong>首选：</strong>DeepSeek V3（中文优化，性价比最高）<br>
+                        <strong>复杂中文任务：</strong>Claude Opus 5 或 GPT-5.6 Terra
+                    </div>
+                </div>
+            </div>
+
+            <h3>成本优化建议</h3>
+            <ol>
+                <li><strong>测试先用轻量模型</strong> - 先用 Luna 或 Gemini Flash 测试，确认效果后再用高级模型</li>
+                <li><strong>合理设置参数</strong> - temperature、max_tokens 等参数影响成本</li>
+                <li><strong>使用缓存</strong> - 相同请求可缓存结果，避免重复调用</li>
+                <li><strong>监控用量</strong> - 定期查看用量报表，优化高消耗环节</li>
+            </ol>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section" id="section3">
+            <h2>三、中转站接入详细流程</h2>
+            
+            <h3>步骤 1：注册账号</h3>
+            <p>访问 <a href="https://quanzil.com/" target="_blank">全智API</a>，使用邮箱或手机号快速注册，无需海外支付方式。</p>
+
+            <h3>步骤 2：创建 API Key</h3>
+            <p>进入后台管理页面，点击「创建新密钥」：</p>
+            <ul>
+                <li>✅ 为密钥命名，方便管理多个项目</li>
+                <li>✅ 设置使用额度上限（可选）</li>
+                <li>✅ 复制并妥善保存密钥，<strong>不要分享给他人</strong></li>
+            </ul>
+
+            <h3>步骤 3：充值与查看价格</h3>
+            <ul>
+                <li>进入「充值中心」，支持支付宝、微信支付</li>
+                <li>查看各模型实时价格，价格表会实时更新</li>
+                <li>建议先充值最小金额测试服务</li>
+            </ul>
+
+            <h3>步骤 4：获取接入信息</h3>
+            <div class="code-block" data-lang="config">
+                <code>Base URL: https://quanzil.com/v1<br>API Key: sk-xxxxxxxxxxxxxx（你的密钥）</code>
+            </div>
+
+            <h3>步骤 5：配置并测试</h3>
+            <p><strong>方式 A：使用 OpenAI SDK（推荐）</strong></p>
+            <p>Python 环境：</p>
+            <div class="code-block" data-lang="bash">
+                <code>pip install openai</code>
+            </div>
+
+            <p>创建测试文件 <code class="code-inline">test_api.py</code>：</p>
+            <div class="code-block" data-lang="python">
+                <code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-xxxxxxxxxxxxxx",  # 替换为你的密钥
+    base_url="https://quanzil.com/v1"
+)
+
+# 测试连接
+response = client.chat.completions.create(
+    model="gpt-5.6-luna",  # 使用轻量模型测试
+    messages=[{"role": "user", "content": "你好"}],
+    max_tokens=50
+)
+
+print("✅ 连接成功！")
+print(response.choices[0].message.content)</code>
+            </div>
+
+            <p>运行测试：</p>
+            <div class="code-block" data-lang="bash">
+                <code>python test_api.py</code>
+            </div>
+
+            <p><strong>方式 B：使用 curl 测试</strong></p>
+            <div class="code-block" data-lang="bash">
+                <code>curl https://quanzil.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-xxxxxxxxxxxxxx" \
+  -d '{
+    "model": "gpt-5.6-luna",
+    "messages": [{"role": "user", "content": "测试连接"}],
+    "max_tokens": 50
+  }'</code>
+            </div>
+
+            <h3>步骤 6：查看用量与账单</h3>
+            <p>登录后台，可以实时查看：</p>
+            <ul>
+                <li>各模型调用量</li>
+                <li>Token 消耗明细</li>
+                <li>费用统计</li>
+                <li>API 调用日志</li>
+            </ul>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="section" id="section4">
+            <h2>四、接入前后检查清单</h2>
+            
+            <h3>✅ 接入前必须检查</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>检查项</th>
+                        <th>说明</th>
+                        <th>如何检查</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>模型可用性</strong></td>
+                        <td>确认所需模型在平台已开放</td>
+                        <td>查看模型列表页</td>
+                    </tr>
+                    <tr>
+                        <td><strong>实时价格</strong></td>
+                        <td>核对当前单价，避免价格变动</td>
+                        <td>查看价格页</td>
+                    </tr>
+                    <tr>
+                        <td><strong>功能支持</strong></td>
+                        <td>确认流式输出、函数调用等功能可用</td>
+                        <td>阅读文档或咨询客服</td>
+                    </tr>
+                    <tr>
+                        <td><strong>接口协议</strong></td>
+                        <td>确认兼容 OpenAI 格式还是其他格式</td>
+                        <td>查看接入文档</td>
+                    </tr>
+                    <tr>
+                        <td><strong>并发限制</strong></td>
+                        <td>了解并发数限制，避免业务受限</td>
+                        <td>查看服务条款</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>⚠️ 常见错误排查</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>错误码</th>
+                        <th>原因</th>
+                        <th>解决方法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code class="code-inline">401 Unauthorized</code></td>
+                        <td>API Key 错误或已过期</td>
+                        <td>检查 Key 是否正确，是否被撤销</td>
+                    </tr>
+                    <tr>
+                        <td><code class="code-inline">404 Not Found</code></td>
+                        <td>URL 路径或模型名错误</td>
+                        <td>检查 Base URL、模型 ID 拼写</td>
+                    </tr>
+                    <tr>
+                        <td><code class="code-inline">429 Too Many Requests</code></td>
+                        <td>超过速率限制或余额不足</td>
+                        <td>检查账户余额、降低请求频率</td>
+                    </tr>
+                    <tr>
+                        <td><code class="code-inline">500 Internal Server Error</code></td>
+                        <td>服务端异常</td>
+                        <td>联系客服或稍后重试</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🔒 安全最佳实践</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">密钥管理</div>
+                    <div class="feature-desc">
+                        ✅ 使用环境变量存储密钥<br>
+                        ✅ 代码中使用 <code class="code-inline">os.getenv("API_KEY")</code><br>
+                        ❌ 不要硬编码在代码中<br>
+                        ❌ 不要提交到 Git 仓库
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚠️</div>
+                    <div class="feature-title">密钥泄露应对</div>
+                    <div class="feature-desc">
+                        • 立即在后台撤销泄露的密钥<br>
+                        • 创建新密钥并更新配置<br>
+                        • 检查用量是否有异常
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">日常安全</div>
+                    <div class="feature-desc">
+                        • 定期更换密钥<br>
+                        • 为不同项目创建独立密钥<br>
+                        • 设置额度上限，防止意外消耗
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5 -->
+        <div class="section" id="section5">
+            <h2>五、实战代码示例</h2>
+            
+            <h3>5.1 curl 示例</h3>
+            <h4>基础调用</h4>
+            <div class="code-block" data-lang="bash">
+                <code>curl https://quanzil.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "claude-opus-5",
+    "messages": [
+      {"role": "user", "content": "你好，请介绍一下你自己。"}
+    ]
+  }'</code>
+            </div>
+
+            <h3>5.2 Python 完整示例</h3>
+            <h4>安装依赖</h4>
+            <div class="code-block" data-lang="bash">
+                <code>pip install openai</code>
+            </div>
+
+            <h4>基础调用</h4>
+            <div class="code-block" data-lang="python">
+                <code>from openai import OpenAI
+import os
+
+# 从环境变量读取密钥（推荐）
+api_key = os.getenv("QUANZIL_API_KEY")
+
+# 初始化客户端
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://quanzil.com/v1"
+)
+
+# 发送请求
+response = client.chat.completions.create(
+    model="claude-opus-5",
+    messages=[
+        {"role": "user", "content": "你好，请介绍一下你自己。"}
+    ]
+)
+
+print(response.choices[0].message.content)</code>
+            </div>
+
+            <h4>流式输出</h4>
+            <div class="code-block" data-lang="python">
+                <code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://quanzil.com/v1"
+)
+
+# 流式输出
+stream = client.chat.completions.create(
+    model="gpt-6-astra",
+    messages=[
+        {"role": "user", "content": "写一首关于AI的诗"}
+    ],
+    stream=True
+)
+
+print("AI回复：", end="")
+for chunk in stream:
+    if chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+print()  # 换行</code>
+            </div>
+
+            <h4>错误处理与重试</h4>
+            <div class="code-block" data-lang="python">
+                <code>from openai import OpenAI
+import time
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://quanzil.com/v1"
+)
+
+def call_api_with_retry(model, messages, max_retries=3):
+    """带重试机制的 API 调用"""
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages
+            )
+            return response
+        except Exception as e:
+            print(f"第 {attempt + 1} 次尝试失败: {str(e)}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)  # 指数退避
+            else:
+                raise e
+
+# 使用示例
+try:
+    response = call_api_with_retry(
+        model="gpt-5.6-terra",
+        messages=[{"role": "user", "content": "测试"}]
+    )
+    print(response.choices[0].message.content)
+except Exception as e:
+    print(f"API 调用失败: {str(e)}")</code>
+            </div>
+
+            <h3>5.3 Node.js 示例</h3>
+            <h4>安装依赖</h4>
+            <div class="code-block" data-lang="bash">
+                <code>npm install openai</code>
+            </div>
+
+            <h4>基础调用</h4>
+            <div class="code-block" data-lang="javascript">
+                <code>import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.QUANZIL_API_KEY,
+  baseURL: 'https://quanzil.com/v1'
+});
+
+async function main() {
+  const response = await client.chat.completions.create({
+    model: 'claude-opus-5',
+    messages: [
+      { role: 'user', content: '你好，请介绍一下你自己。' }
+    ]
+  });
+
+  console.log(response.choices[0].message.content);
+}
+
+main();</code>
+            </div>
+        </div>
+
+        <!-- Section 6 -->
+        <div class="section" id="section6">
+            <h2>六、最佳实践与优化建议</h2>
+            
+            <h3>6.1 成本优化</h3>
+            <h4>Token 使用优化</h4>
+            <div class="code-block" data-lang="python">
+                <code># ❌ 不好的做法：发送过多冗余信息
+messages = [
+    {"role": "user", "content": "请帮我分析这篇文章：[粘贴 5000 字文章]"}
+]
+
+# ✅ 好的做法：提取关键信息
+messages = [
+    {"role": "user", "content": "请分析这篇文章的核心观点：[摘要或关键段落]"}
+]</code>
+            </div>
+
+            <h4>模型选择策略</h4>
+            <div class="code-block" data-lang="python">
+                <code>def get_model_for_task(task_type, complexity):
+    """根据任务类型和复杂度选择最合适的模型"""
+    
+    if task_type == "simple_qa":
+        return "gpt-5.6-luna"  # 简单问答用轻量模型
+    
+    elif task_type == "coding":
+        if complexity == "high":
+            return "claude-opus-5"  # 复杂编程任务
+        else:
+            return "gpt-5.6-terra"  # 日常编程
+    
+    elif task_type == "chinese":
+        return "deepseek-chat"  # 中文场景优先 DeepSeek
+    
+    elif task_type == "analysis":
+        return "gpt-6-astra"  # 复杂分析
+    
+    else:
+        return "gpt-5.6-terra"  # 默认平衡型</code>
+            </div>
+
+            <h3>6.2 性能优化</h3>
+            <h4>并发控制</h4>
+            <div class="code-block" data-lang="python">
+                <code>import asyncio
+from openai import AsyncOpenAI
+
+client = AsyncOpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://quanzil.com/v1"
+)
+
+async def process_batch(prompts, batch_size=5):
+    """批量处理，控制并发数"""
+    results = []
+    
+    for i in range(0, len(prompts), batch_size):
+        batch = prompts[i:i+batch_size]
+        
+        tasks = [
+            client.chat.completions.create(
+                model="gpt-5.6-luna",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            for prompt in batch
+        ]
+        
+        batch_results = await asyncio.gather(*tasks)
+        results.extend([r.choices[0].message.content for r in batch_results])
+        
+        # 避免触发速率限制
+        await asyncio.sleep(1)
+    
+    return results</code>
+            </div>
+
+            <h3>6.3 监控与日志</h3>
+            <div class="code-block" data-lang="python">
+                <code>import time
+from datetime import datetime
+
+class APIMonitor:
+    """API 调用监控"""
+    
+    def __init__(self):
+        self.calls = []
+    
+    def log_call(self, model, success, tokens, duration):
+        """记录调用"""
+        self.calls.append({
+            "timestamp": datetime.now(),
+            "model": model,
+            "success": success,
+            "tokens": tokens,
+            "duration": duration
+        })
+    
+    def get_stats(self):
+        """获取统计信息"""
+        if not self.calls:
+            return {}
+        
+        total_calls = len(self.calls)
+        success_calls = sum(1 for c in self.calls if c["success"])
+        total_tokens = sum(c["tokens"] for c in self.calls if c["success"])
+        avg_duration = sum(c["duration"] for c in self.calls) / total_calls
+        
+        return {
+            "total_calls": total_calls,
+            "success_rate": success_calls / total_calls,
+            "total_tokens": total_tokens,
+            "avg_duration": avg_duration
+        }
+
+monitor = APIMonitor()</code>
+            </div>
+        </div>
+
+        <!-- Section 7 -->
+        <div class="section" id="section7">
+            <h2>七、常见问题 FAQ</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Q1: 中转站和官方 API 有什么区别？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 主要区别：<br>
+                    • <strong>接入方式</strong>：中转站无需海外支付和网络配置，国内直连<br>
+                    • <strong>价格</strong>：中转站通常更便宜（便宜 20%-70%）<br>
+                    • <strong>功能</strong>：功能基本相同，但最新功能可能延迟几天上线<br>
+                    • <strong>稳定性</strong>：选择可靠的中转站，稳定性有保障
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q2: 中转站安全吗？数据会被泄露吗？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 选择正规中转站，数据安全有保障：<br>
+                    • 数据不落地，实时转发<br>
+                    • 有隐私政策和服务条款<br>
+                    • 建议不要发送高度敏感数据<br>
+                    • 可以加密后再发送
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q3: 如何判断一个中转站是否靠谱？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 参考以下标准：<br>
+                    • ✅ 运营时间长（建议 2 年以上）<br>
+                    • ✅ 价格合理（不是越便宜越好）<br>
+                    • ✅ 文档完善，客服响应及时<br>
+                    • ✅ 用户评价好<br>
+                    • ✅ 支持小额测试
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q4: API Key 泄露了怎么办？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 立即处理：<br>
+                    1. 登录后台，撤销泄露的 Key<br>
+                    2. 创建新 Key 并更新配置<br>
+                    3. 检查用量是否有异常消耗<br>
+                    4. 联系客服说明情况
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q5: 如何选择合适的模型？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 根据场景选择：<br>
+                    • <strong>编程开发</strong>：Claude Opus 5 > GPT-5.6 Terra<br>
+                    • <strong>日常应用</strong>：GPT-5.6 Terra 或 Claude Sonnet 4.6<br>
+                    • <strong>中文场景</strong>：DeepSeek V3（性价比最高）<br>
+                    • <strong>高频轻任务</strong>：GPT-5.6 Luna 或 Gemini 3.5 Flash<br>
+                    • <strong>复杂推理</strong>：GPT-6 Astra 或 Claude Fable 5.1
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q6: 流式输出和非流式有什么区别？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong><br>
+                    • <strong>非流式</strong>：等待完整响应，适合批处理<br>
+                    • <strong>流式</strong>：实时输出，用户体验好，适合聊天应用
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q7: 如何降低 API 调用成本？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 优化方法：<br>
+                    1. 选择合适的模型（不要过度使用高级模型）<br>
+                    2. 减少 prompt 长度，提取关键信息<br>
+                    3. 使用缓存，避免重复调用<br>
+                    4. 合理设置 <code class="code-inline">max_tokens</code> 参数<br>
+                    5. 监控用量，优化高消耗环节
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q8: 支持哪些编程语言？</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 所有支持 HTTP 请求的语言都可以，推荐：<br>
+                    • Python（OpenAI SDK）<br>
+                    • Node.js（OpenAI SDK）<br>
+                    • Go、Java、PHP 等（使用 HTTP 库）
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 8 -->
+        <div class="section" id="section8">
+            <h2>八、资源链接</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>资源</th>
+                        <th>说明</th>
+                        <th>链接</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>全智API 官网</strong></td>
+                        <td>注册与接入</td>
+                        <td><a href="https://quanzil.com/" target="_blank">https://quanzil.com/</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>模型价格页</strong></td>
+                        <td>实时价格查询</td>
+                        <td><a href="https://quanzil.com/pricing" target="_blank">https://quanzil.com/pricing</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>接入文档</strong></td>
+                        <td>详细接入指南</td>
+                        <td><a href="https://quanzil.com/docs" target="_blank">https://quanzil.com/docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenAI API 文档</strong></td>
+                        <td>官方 API 参考</td>
+                        <td><a href="https://platform.openai.com/docs" target="_blank">https://platform.openai.com/docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude API 文档</strong></td>
+                        <td>官方 API 参考</td>
+                        <td><a href="https://docs.anthropic.com/" target="_blank">https://docs.anthropic.com/</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert alert-warning">
+            <div class="alert-title">⚠️ 免责声明</div>
+            <p>本教程为独立的第三方整理项目，与 OpenAI、Anthropic、GitHub 等公司不存在官方合作、授权或隶属关系。ChatGPT、OpenAI、Claude、Anthropic 等商标归各自权利人所有。</p>
+            <p>使用中转服务前，请仔细阅读平台的服务条款与隐私政策。本教程仅供参考，不构成任何投资或使用建议。</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>📚 GPT API、Claude API 国内接入完整指南</p>
+        <div class="footer-links">
+            <a href="https://quanzil.com/" target="_blank">全智API</a>
+            <a href="#section1">接入方式</a>
+            <a href="#section2">模型选择</a>
+            <a href="#section5">代码示例</a>
+            <a href="#section7">常见问题</a>
+        </div>
+        <p style="margin-top: 20px; opacity: 0.7;">更新于 2026-10-14 | Made with ❤️ for Developers</p>
+    </div>
+</body>
+</html>
