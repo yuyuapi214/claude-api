@@ -109,8 +109,6 @@ ChatGPT Plus、Claude 订阅与 API 用量分别计费；网页会员资格不�
 - ✅ 设置使用额度上限（可选）
 - ✅ 复制并妥善保存密钥，**不要分享给他人**
 
-![全智API令牌创建页](assets/images/token-creation.jpg)
-
 ### 步骤 3：充值与查看价格
 
 - 进入「充值中心」，支持支付宝、微信支付
@@ -274,8 +272,6 @@ for chunk in stream:
    - 定期更换密钥
    - 为不同项目创建独立密钥
    - 设置额度上限，防止意外消耗
-
-更多背景见 [GPT API 国内接入教程](docs/gpt-api-china.md)、[GPT-5.6 选型说明](docs/gpt-5-6-api.md)和[中转服务检查清单](docs/api-proxy-guide.md)。
 
 ---
 
